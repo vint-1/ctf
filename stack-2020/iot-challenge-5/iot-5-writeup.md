@@ -23,7 +23,24 @@ From the information provided, we know that the solution will (at least) require
 
 <img src="pictures/rsa_token_setup.png" alt="rsa_token_setup" style="zoom:60%;" />
 
-<Working on it>
+The image provided with the challenge reveals that the token is made of 2 components: 16x2 LCD (top), and a PCF8574T IO Expander (black PCB below). The probes used to capture the .logicdata file are attached to the "SDA" and "SCL" input pins of the IO Expander. We can immediately infer that:
+
+- The captured signal follows the I2C protocol (2 pins, SDA for data and SCL for clock)
+- When bytes are sent to the display through I2C, the expander([datasheet](https://www.nxp.com/docs/en/data-sheet/PCF8574_PCF8574A.pdf)) converts each byte into an 8-pin digital output
+
+The question then arises: If the expander only has 8 pins of output, how does it control all 16 pins on the LCD?
+
+The answer is that it doesn't. From the LCD's [datasheet](https://cdn-shop.adafruit.com/datasheets/TC1602A-01T.pdf), we can see that it can operate in 2 modes: 4-bit and 8-bit. In the former, D0-D3 are disconnected, with the LCD receiving instructions through D4-D7, as well as through the RS, RW, E, and A pins. The remaining 4 pins (VSS, VDD, D0, K), used for supplying power to the LCD, are kept fixed. This [schematic](https://image.dfrobot.com/image/data/DFR0063/DFR0063_v1.2_Schematic.pdf) of a similar product suggests that the LCD is indeed running in 4-bit mode.
+
+Here, the mapping between I2C bits and the pins is also important. The schematic, as well as our tests, reveal that the order of the pins is:
+
+LSB													MSB
+
+RS	RW	E	A	D4	D5	D6	D7
+
+This, combined with the instruction mapping available in the LCD's datasheet (and also on [Wikipedia](https://en.wikipedia.org/wiki/Hitachi_HD44780_LCD_controller)), should be enough for us to write some software that takes decoded I2C writes (which we can obtain from .logicdata files using a [logic analyzer](https://www.saleae.com/downloads/)) as input, and outputs the characters displayed on the LCD. This is probably the best solution, right? I mean, what kind of nutcase would want to deal with all the hardware issues and painful debuggi-
+
+ <img src="pictures/10.jpg" alt="10" style="zoom: 15%;" />
 
 #### The Fast, Dirty Method: Solving with Hardware
 
@@ -39,7 +56,7 @@ This setup has the advantage of making use of publicly available, easy-to-use li
 
 ###### Computer to Arduino
 
-The raw output of our logic analyzer looks like this:
+The raw output of our logic analyzer (Saleae Logic Analyzer v1) looks like this:
 
 ```
 Time [s],Packet ID,Address,Data,Read/Write,ACK/NAK
