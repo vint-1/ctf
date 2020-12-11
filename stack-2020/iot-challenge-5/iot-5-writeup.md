@@ -1,6 +1,8 @@
-# STACK 2020: IOT RSA Challenge
+# STACK 2020: IOT RSA Token
 
-*The solution presented is the one used by Sig0ct to solve the IOT RSA challenge during STACK 2020, the only university-category team to do so.*
+*This solution was used by Sig0ct during STACK 2020, where we were the only university-category team to solve the IOT RSA challenge.*
+
+*This is what I worked on personally. The team's full writeup is [here](https://github.com/vint-1/ctf-writeups/blob/master/stack-2020/iot-challenge-5/writeup/writeup.md).*
 
 ## *Overview*
 
@@ -180,7 +182,7 @@ Putting everything together, we see a beautiful sight: hardware that actually wo
 
 <img src="pictures/9.jpg" alt="9" style="zoom:12%;" />
 
-<img src="pictures/9.jpg" alt="9" style="zoom:12%;" />
+<img src="pictures/10.jpg" alt="10" style="zoom:12%;" />
 
 ## *Generating Tokens*
 
